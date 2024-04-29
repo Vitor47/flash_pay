@@ -32,12 +32,20 @@ API Flash Pay
     ```
 2. Instalar dependências e criando ambiente:
 
-    ```sh
-    $ cd projectname
-    $ python3.10 -m venv venv # cria ambiente virtual
-    $ source venv/bin/activate # ativa ambiente virtual linux
-    $ pip install -r requirements.txt
-    ```
+- Without docker:
+
+  ```sh
+  $ cd projectname
+  $ python3.10 -m venv venv # cria ambiente virtual
+  $ source venv/bin/activate # ativa ambiente virtual linux
+  $ pip install -r requirements.txt
+  ```
+
+- With docker:
+
+  ```sh 
+  $ docker-compose up web
+  ```
 
 3. Criando banco:
 
