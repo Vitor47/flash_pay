@@ -2,15 +2,14 @@
 from __future__ import unicode_literals
 
 from django.contrib import messages
-from django.contrib.auth import authenticate
-from django.contrib.auth import login as login_django
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 
 from ..core.utils import is_email_valid
 from .forms import loginForm
+from .models import User
 
 
 def login_user(request: HttpRequest) -> HttpResponse:
@@ -31,20 +30,23 @@ def login_user(request: HttpRequest) -> HttpResponse:
                 if not validated_email:
                     messages.error(request, "E-mail inválido!")
 
-                user = authenticate(email=email, password=senha)
-
+                user = User.objects.filter(email=email).first()
                 if not user:
                     messages.error(request, "Login inválido!")
                     return render(request, "login.html", context=context)
+
+                if not check_password(senha, user.password):
+                    messages.error(request, "Login inválido!")
+                    return render(request, "login.html", context=context)
+
             except Exception:
                 messages.error(
                     request, "Erro inesperado, favor tentar novamente!"
                 )
                 return render(request, "login.html", context=context)
 
-            if user.is_active and (user.is_staff or user.is_superuser):
-                login_django(request, user)
-                return redirect("/flashpay-api-swagger/")
+            if user:
+                return redirect("/api-swagger/")
 
         else:
             messages.error(request, "Dados informados inválidos!")
@@ -53,5 +55,4 @@ def login_user(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def logout_user(request: HttpRequest) -> HttpResponseRedirect:
-    logout(request)
-    return HttpResponseRedirect("/flashpay-api-swagger/")
+    return HttpResponseRedirect("/api-swagger/")

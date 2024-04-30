@@ -1,25 +1,24 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from mongoengine import Document, fields
+from datetime import datetime
 
 
-class AuditLog(models.Model):
-    user = models.ForeignKey("userauth.User", on_delete=models.CASCADE)
-    login_time = models.DateTimeField(auto_now_add=True)
-    ip_address = models.GenericIPAddressField()
+class AuditLog(Document):
+    user = fields.ReferenceField("userauth.User")
+    login_time = fields.DateTimeField(default=datetime.now())
+    ip_address = fields.BinaryField()
 
     class Meta:
         verbose_name = "Audit Log"
         verbose_name_plural = "Audit Logs"
 
 
-class Log(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey("content_type", "object_id")
-    action = models.CharField(max_length=50)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    object_repr = models.CharField(max_length=200, blank=True, null=True)
+class Log(Document):
+    object_id = fields.IntField(min_value=1)
+    action = fields.StringField(max_length=50)
+    timestamp = fields.DateTimeField(default=datetime.now())
+    object_repr = fields.StringField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Log"
@@ -33,21 +32,18 @@ class Log(models.Model):
             return f"{content_object_str} ({self.action}) at {self.timestamp}"
 
 
-class BaseModel(models.Model):
-    cadastrado_por = models.ForeignKey(
+class BaseModel(Document):
+    cadastrado_por = fields.ReferenceField(
         "userauth.User",
         related_name="%(class)s_cadastrado_por",
-        on_delete=models.PROTECT,
     )
-    editado_por = models.ForeignKey(
+    editado_por = fields.ReferenceField(
         "userauth.User",
         null=True,
         blank=True,
         related_name="%(class)s_editado_por",
-        on_delete=models.PROTECT,
     )
-    data_cadastro = models.DateTimeField(auto_now_add=True)
-    data_alteracao = models.DateTimeField(auto_now=True)
+    data_cadastro = fields.DateTimeField(default=datetime.now())
+    data_alteracao = fields.DateTimeField(default=datetime.now())
 
-    class Meta:
-        abstract = True
+    meta = {'allow_inheritance': True}

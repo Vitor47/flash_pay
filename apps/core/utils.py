@@ -50,7 +50,7 @@ def is_cnpj_valid(cnpj: str) -> bool:
 
 
 def is_email_valid(email: str) -> bool:
-    res = re.search(r"^[\w-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,3}$", email)
+    res = re.search(r"^[\w.-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,3}$", email)
     if res is None:
         return False
 

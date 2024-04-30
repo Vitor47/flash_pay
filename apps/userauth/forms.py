@@ -2,9 +2,7 @@
 from __future__ import unicode_literals
 
 from django import forms
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .models import User
 
 
 class loginForm(forms.Form):
@@ -26,15 +24,3 @@ class loginForm(forms.Form):
         ),
         required=True,
     )
-
-
-class UserCreationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ("email",)
-
-
-class UserChangeForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = ("email",)
