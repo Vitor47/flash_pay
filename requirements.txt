@@ -14,4 +14,4 @@ sqlparse==0.4.4
 typing_extensions==4.10.0
 urllib3==2.2.1
 mongoengine==0.28.2
-rest_framework_simplejwt==0.0.2
+djangorestframework-simplejwt==5.3.1
