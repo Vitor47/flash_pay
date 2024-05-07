@@ -91,8 +91,9 @@ USERNAME_DB = os.getenv("USERNAME_DB")
 PASSWORD_DB = os.getenv("PASSWORD_DB")
 HOST_DB = os.getenv("HOST_DB")
 
+
 mongoengine.connect(
-    db="flashpay",
+    db="cluster0",
     host=f"mongodb+srv://{HOST_DB}/",
     username=USERNAME_DB,
     password=PASSWORD_DB,
