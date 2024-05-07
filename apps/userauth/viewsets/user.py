@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework_mongoengine.viewsets import ModelViewSet
 
 from apps.core.pagination import PageLimitPagination
+from apps.core.permission import CustomUserPermission
 
 from ..models import User
 from ..serializers.change_password import ChangePasswordSerializer
@@ -18,6 +19,8 @@ class UserViewset(ModelViewSet):
     """
     A viewset that provides the standard actions
     """
+
+    permission_classes = (CustomUserPermission,)
 
     descriptor = {
         "POST": "Adicionou um usuário.",

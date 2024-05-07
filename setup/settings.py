@@ -105,6 +105,8 @@ DATABASES = {
     }
 }
 
+USER_MODEL_MONGO = "userauth.User"
+
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -162,10 +164,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
-        "authentication.jwt_authentication.IsTokenValid",
+        "apps.core.permission.IsTokenValid",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication",
+        "authentication.jwt_authentication.JWTAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_FILTER_BACKENDS": [

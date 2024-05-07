@@ -10,8 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
 
+from apps.core.token.tokens import RefreshToken
+from apps.log.models import AuditLog
 from apps.userauth.models import RevokedToken
 
 from ..serializers.user_login import CustomTokenObtainSerializer
@@ -32,9 +33,7 @@ class CustomAuthTokenView(APIView):
 
         # Registro de auditoria
         ip_address: str = request.META.get("REMOTE_ADDR")
-        # AuditLog.objects.create(user=user, ip_address=ip_address)
-
-        print(user)
+        AuditLog.objects.create(user=user, ip_address=str(ip_address))
 
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
@@ -47,15 +46,15 @@ class CustomAuthTokenView(APIView):
         # Create the token payload
         payload = {
             "user": {
-                "_id": str(user.id),
+                "id": str(user.id),
                 "email": user.email,
+                "admin": user.admin,
+                "type_user": user.type_user.title(),
             },
             "exp": token_expiry,
             "refresh": str(refresh),
             "access": str(access),
         }
-
-        print(payload)
 
         return Response(payload, status=status.HTTP_200_OK)
 

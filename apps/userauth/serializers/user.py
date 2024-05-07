@@ -41,6 +41,7 @@ class UserSerializer(DocumentSerializer):
         ref_name = "User"
         model = User
         fields = [
+            "id",
             "full_name",
             "email",
             "telephone",
@@ -49,6 +50,8 @@ class UserSerializer(DocumentSerializer):
             "birth_date",
             "sexo",
             "address",
+            "admin",
+            "type_user",
             "password",
         ]
 
@@ -69,6 +72,33 @@ class UserSerializer(DocumentSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
+        user = self.context["request"].user
+
+        if attrs.get("type_user") == "aluno" and not attrs.get("admin"):
+            pass
+        elif user.is_authenticated:
+            if attrs.get("admin") and not user.admin:
+                raise ValidationError(
+                    {
+                        "error": (
+                            "Você não tem permissão para criar um"
+                            " Administrador."
+                        )
+                    }
+                )
+            if attrs.get("type_user") != "aluno" and not user.admin:
+                raise ValidationError(
+                    {
+                        "error": (
+                            "Você não tem permissão para criar um Usuário não"
+                            " aluno."
+                        )
+                    }
+                )
+        else:
+            raise ValidationError(
+                {"error": "Você não tem permissão para essa ação."}
+            )
 
         if attrs.get("cpf_cnpj", ""):
             cpf_cnpj = only_numbers(attrs.get("cpf_cnpj", ""))
@@ -134,11 +164,13 @@ class UserSerializer(DocumentSerializer):
 
 
 class UsuarioRetrieveMixinSerializer(DocumentSerializer):
+    id = fields.IntField()
     cpf_cnpj = fields.StringField(required=True)
     full_name = fields.StringField(required=True)
     email = fields.EmailField(required=True)
     birth_date = fields.DateField(required=True)
     address = AddressRetrieveSerializer(many=False, required=True)
+    type_user = fields.StringField(db_field="get_type_user_display")
 
     class Meta:
         model = User
@@ -152,6 +184,8 @@ class UsuarioRetrieveMixinSerializer(DocumentSerializer):
             "rg",
             "cpf_cnpj",
             "address",
+            "admin",
+            "type_user",
         ]
 
     def to_representation(self, instance):
