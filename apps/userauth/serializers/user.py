@@ -35,7 +35,7 @@ class AddressSerializer(DocumentSerializer):
 
 
 class UserSerializer(DocumentSerializer):
-    address = AddressSerializer()
+    address = AddressSerializer(required=False)
 
     class Meta:
         ref_name = "User"
@@ -59,16 +59,14 @@ class UserSerializer(DocumentSerializer):
         if validated_data.get("address"):
             address = validated_data.pop("address")
             validated_data["address"] = Address.objects.create(**address).id
-
-        return User.objects.create(**validated_data)
+        return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        addres = validated_data.pop("addres")
-
-        if addres:
-            Address.objects.filter(id=instance.id).update(**addres)
-
-        return User.objects.filter(id=instance.id).update(**validated_data)
+        if validated_data.get("address"):
+            addres = validated_data.pop("addres")
+            if addres:
+                Address.objects.filter(id=instance.id).update(**addres)
+        return super().update(instance, validated_data)
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
@@ -103,11 +101,9 @@ class UserSerializer(DocumentSerializer):
         if attrs.get("cpf_cnpj", ""):
             cpf_cnpj = only_numbers(attrs.get("cpf_cnpj", ""))
             if self.instance:
-                exists_cpf_cnpj = (
-                    User.objects.filter(cpf_cnpj__exact=cpf_cnpj)
-                    .exclude(id=self.instance.id)
-                    .count()
-                )
+                exists_cpf_cnpj = User.objects.filter(
+                    cpf_cnpj__exact=cpf_cnpj, id__ne=self.instance.id
+                ).count()
             else:
                 exists_cpf_cnpj = User.objects.filter(
                     cpf_cnpj__exact=cpf_cnpj
@@ -135,11 +131,9 @@ class UserSerializer(DocumentSerializer):
         email = attrs.get("email", None)
         exists_email = False
         if self.instance:
-            exists_email = (
-                User.objects.filter(email__exact=email)
-                .exclude(id=self.instance.id)
-                .count()
-            )
+            exists_email = User.objects.filter(
+                email__exact=email, id__ne=self.instance.id
+            ).count()
         else:
             exists_email = User.objects.filter(email__exact=email).count()
 
@@ -169,7 +163,7 @@ class UsuarioRetrieveMixinSerializer(DocumentSerializer):
     full_name = fields.StringField(required=True)
     email = fields.EmailField(required=True)
     birth_date = fields.DateField(required=True)
-    address = AddressRetrieveSerializer(many=False, required=True)
+    address = AddressRetrieveSerializer(many=False, required=False)
     type_user = fields.StringField(db_field="get_type_user_display")
 
     class Meta:

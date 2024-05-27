@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from rest_framework.permissions import BasePermission
 
-from apps.userauth.models import RevokedToken
+from apps.core.models import RevokedToken
 
 
 class CustomUserPermission(permissions.BasePermission):
