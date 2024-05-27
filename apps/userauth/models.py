@@ -4,7 +4,6 @@ not in INSTALLED_APPS.
 """
 
 import unicodedata
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib.auth import password_validation
@@ -15,7 +14,7 @@ from django.contrib.auth.hashers import (
     make_password,
 )
 from django.utils.crypto import salted_hmac
-from mongoengine import CASCADE, Document, fields
+from mongoengine import CASCADE, fields
 
 from apps.address.models import Address
 from apps.log.models import BaseModel
@@ -168,23 +167,8 @@ class User(AbstractBaseUser, BaseModel):
         default="M",
     )
     address = fields.ReferenceField(
-        Address, required=True, reverse_delete_rule=CASCADE
+        Address, required=False, reverse_delete_rule=CASCADE
     )
     password = fields.StringField(required=True)
 
     meta = {"allow_inheritance": True}
-
-
-class RevokedToken(Document):
-    key = fields.StringField(max_length=500, unique=True)
-    user = fields.ReferenceField(User, reverse_delete_rule=CASCADE)
-    revoked_at = fields.DateTimeField(default=datetime.now)
-
-    meta = {"allow_inheritance": True}
-
-    def __str__(self) -> str:
-        return "Revoked Token"
-
-    @classmethod
-    def create_revoked_token(cls, user_id, token: str) -> dict:
-        return cls.objects.create(user_id=user_id, key=str(token))

@@ -11,9 +11,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.core.models import RevokedToken
 from apps.core.token.tokens import RefreshToken
 from apps.log.models import AuditLog
-from apps.userauth.models import RevokedToken
 
 from ..serializers.user_login import CustomTokenObtainSerializer
 

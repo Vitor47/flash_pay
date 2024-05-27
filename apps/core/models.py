@@ -1,9 +1,13 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 from django.contrib.auth import models as auth_models
 from django.db.models.manager import EmptyManager
 from django.utils.functional import cached_property
+from mongoengine import CASCADE, Document, fields
 from rest_framework_simplejwt.settings import api_settings
+
+from apps.userauth.models import User
 
 if TYPE_CHECKING:
     from .token.tokens import Token
@@ -114,3 +118,18 @@ class TokenUser:
     def __getattr__(self, attr: str) -> Optional[Any]:
         """This acts as a backup attribute getter for custom claims defined in Token serializers."""
         return self.token.get(attr, None)
+
+
+class RevokedToken(Document):
+    key = fields.StringField(max_length=500, unique=True)
+    user = fields.ReferenceField(User, reverse_delete_rule=CASCADE)
+    revoked_at = fields.DateTimeField(default=datetime.now)
+
+    meta = {"allow_inheritance": True}
+
+    def __str__(self) -> str:
+        return "Revoked Token"
+
+    @classmethod
+    def create_revoked_token(cls, user_id, token: str) -> dict:
+        return cls.objects.create(user_id=user_id, key=str(token))
