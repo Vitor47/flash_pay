@@ -132,4 +132,14 @@ class RevokedToken(Document):
 
     @classmethod
     def create_revoked_token(cls, user_id, token: str) -> dict:
-        return cls.objects.create(user_id=user_id, key=str(token))
+        return cls.objects.create(user=user_id, key=str(token))
+
+
+class University(Document):
+    name = fields.StringField(max_length=500, unique=True)
+    cnpj = fields.StringField(max_length=14, unique=True)
+
+    meta = {"allow_inheritance": True}
+
+    def __str__(self) -> str:
+        return self.name
