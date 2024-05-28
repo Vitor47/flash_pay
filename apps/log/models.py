@@ -21,17 +21,17 @@ class Log(Document):
 
 
 class BaseModel(Document):
-    cadastrado_por = fields.ReferenceField(
+    registered_by = fields.ReferenceField(
         "userauth.User",
-        related_name="%(class)s_cadastrado_por",
+        related_name="%(class)s_registered_by",
     )
-    editado_por = fields.ReferenceField(
+    edited_by = fields.ReferenceField(
         "userauth.User",
         null=True,
         blank=True,
-        related_name="%(class)s_editado_por",
+        related_name="%(class)s_edited_by",
     )
-    data_cadastro = fields.DateTimeField(default=datetime.now())
-    data_alteracao = fields.DateTimeField(default=datetime.now())
+    registration_date = fields.DateTimeField(default=datetime.now())
+    modification_date = fields.DateTimeField(default=datetime.now())
 
     meta = {"allow_inheritance": True}

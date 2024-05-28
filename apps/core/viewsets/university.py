@@ -23,7 +23,7 @@ class UniversityViewset(ModelViewSet):
         "DELETE": "Removeu uma universisade.",
     }
     default_serializer_class = UniversitySerializer
-
+    pagination_class = PageLimitPagination
     serializer_classes = {
         "create": UniversitySerializer,
         "update": UniversitySerializer,
@@ -35,8 +35,6 @@ class UniversityViewset(ModelViewSet):
         return self.serializer_classes.get(
             self.action, self.default_serializer_class
         )
-
-    pagination_class = PageLimitPagination
 
     def get_queryset(self):
         return University.objects.all().order_by("-id")
