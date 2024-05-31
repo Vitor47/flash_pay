@@ -2,16 +2,12 @@
 from __future__ import unicode_literals
 
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework_mongoengine.viewsets import ModelViewSet
 
 from apps.core.pagination import PageLimitPagination
-from apps.core.permission import (
-    IsActivePermission,
-    IsAdminPermission,
-    IsTokenValid,
-    IsTypeAdministradorPermission,
-)
+from apps.core.permission import ShoppePermission
 
 from ..models import Shoppe
 from ..serializers.shoppe import ShoppeSerializer
@@ -23,12 +19,7 @@ class ShoppeViewset(ModelViewSet):
     A viewset that provides the standard actions
     """
 
-    permission_classes = (
-        IsTokenValid,
-        IsActivePermission,
-        IsAdminPermission,
-        IsTypeAdministradorPermission,
-    )
+    permission_classes = (ShoppePermission,)
 
     descriptor = {
         "POST": "Adicionou uma barraca.",
@@ -50,9 +41,15 @@ class ShoppeViewset(ModelViewSet):
         )
 
     def get_queryset(self):
-        return Shoppe.objects.filter(registered_by=self.request.user).order_by(
-            "-id"
-        )
+        return Shoppe.objects.all().order_by("-id")
+
+    def get_object(self):
+        obj = super().get_object()
+
+        if obj.registered_by != self.request.user:
+            raise NotFound({"detail: Barraca / Café não encontradp"}, code=404)
+
+        return obj
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)

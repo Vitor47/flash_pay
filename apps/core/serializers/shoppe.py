@@ -12,7 +12,13 @@ class ShoppeSerializer(DocumentSerializer):
     class Meta:
         ref_name = "Shoppe"
         model = Shoppe
-        fields = ["id", "name", "cnpj", "image"]
+        fields = [
+            "id",
+            "name",
+            "cnpj",
+            "image",
+            "description",
+        ]
 
     def create(self, validated_data):
         try:
