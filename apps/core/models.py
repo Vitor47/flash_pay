@@ -7,6 +7,7 @@ from django.utils.functional import cached_property
 from mongoengine import CASCADE, Document, fields
 from rest_framework_simplejwt.settings import api_settings
 
+from apps.log.models import BaseModel
 from apps.userauth.models import User
 
 if TYPE_CHECKING:
@@ -143,3 +144,22 @@ class University(Document):
 
     def __str__(self) -> str:
         return self.name
+
+
+class Shoppe(BaseModel):
+    name = fields.StringField(max_length=500, required=True)
+    cnpj = fields.StringField(
+        max_length=14,
+        required=True,
+    )
+    description = fields.StringField()
+    image = fields.ImageField()
+
+    meta = {"allow_inheritance": True}
+
+    def __str__(self) -> str:
+        return self.name
+
+    @property
+    def image_url(self):
+        return self.image.grid_id
