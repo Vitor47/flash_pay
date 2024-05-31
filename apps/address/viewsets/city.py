@@ -22,10 +22,12 @@ class CityViewSet(ModelViewSet):
     }
     serializer_class = CitySerializer
     pagination_class = PageLimitPagination
-    queryset = City.objects.all().order_by("-id")
+
+    def get_queryset(self):
+        return City.objects.all().order_by("-id")
 
     def create(self, request, *args, **kwargs):
-        return super(CityViewSet, self).create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

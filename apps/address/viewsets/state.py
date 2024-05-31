@@ -22,10 +22,12 @@ class StateViewSet(ModelViewSet):
     }
     serializer_class = StateSerializer
     pagination_class = PageLimitPagination
-    queryset = State.objects.all().order_by("-id")
+
+    def get_queryset(self):
+        return State.objects.all().order_by("-id")
 
     def create(self, request, *args, **kwargs):
-        return super(StateViewSet, self).create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

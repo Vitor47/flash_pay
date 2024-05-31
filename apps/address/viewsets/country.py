@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_mongoengine.viewsets import ModelViewSet
 
 from apps.address.models import Country
-from apps.address.serializers.country import UniversitySerializer
+from apps.address.serializers.country import CountrySerializer
 from apps.core.pagination import PageLimitPagination
 
 
@@ -20,12 +20,25 @@ class CountryViewSet(ModelViewSet):
         "PUT": "Editou um país.",
         "DELETE": "Removeu um país.",
     }
-    serializer_class = UniversitySerializer
+    default_serializer_class = CountrySerializer
     pagination_class = PageLimitPagination
-    queryset = Country.objects.all().order_by("-id")
+    serializer_classes = {
+        "create": CountrySerializer,
+        "update": CountrySerializer,
+        "retrieve": CountrySerializer,
+        "list": CountrySerializer,
+    }
+
+    def get_serializer_class(self):
+        return self.serializer_classes.get(
+            self.action, self.default_serializer_class
+        )
+
+    def get_queryset(self):
+        return Country.objects.all().order_by("-id")
 
     def create(self, request, *args, **kwargs):
-        return super(CountryViewSet, self).create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

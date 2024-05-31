@@ -44,3 +44,47 @@ class IsTokenValid(BasePermission):
             return False
 
         return True
+
+
+class IsActivePermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+
+        if not request.user.active:
+            return False
+
+        return True
+
+
+class IsAdminPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+
+        if not request.user.admin:
+            return False
+
+        return True
+
+
+class IsTypeAdministradorPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+
+        if request.user.type_user != "administrador":
+            return False
+
+        return True
+
+
+class IsTypeVendedorPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+
+        if request.user.type_user != "vendedor":
+            return False
+
+        return True

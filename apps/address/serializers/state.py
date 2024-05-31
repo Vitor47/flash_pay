@@ -41,3 +41,9 @@ class StateSerializer(DocumentSerializer):
             raise ValidationError({"error": "Este nome já esta em uso!"})
 
         return attrs
+
+    def to_representation(self, instance):
+        instance = super().to_representation(instance)
+
+        instance["name"] = State.state_choices[instance["name"]]
+        return instance

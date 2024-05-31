@@ -6,6 +6,12 @@ from rest_framework.response import Response
 from rest_framework_mongoengine.viewsets import ModelViewSet
 
 from apps.core.pagination import PageLimitPagination
+from apps.core.permission import (
+    IsActivePermission,
+    IsAdminPermission,
+    IsTokenValid,
+    IsTypeAdministradorPermission,
+)
 
 from ..models import University
 from ..serializers.university import UniversitySerializer
@@ -16,6 +22,13 @@ class UniversityViewset(ModelViewSet):
     """
     A viewset that provides the standard actions
     """
+
+    permission_classes = (
+        IsTokenValid,
+        IsActivePermission,
+        IsAdminPermission,
+        IsTypeAdministradorPermission,
+    )
 
     descriptor = {
         "POST": "Adicionou uma universisade.",

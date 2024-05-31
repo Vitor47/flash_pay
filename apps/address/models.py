@@ -17,8 +17,6 @@ class Country(BaseModel):
     name = fields.StringField(
         max_length=20,
         choices=country_choices.keys(),
-        default="Brasil",
-        unique=True,
     )
 
     def __str__(self):
@@ -60,7 +58,6 @@ class State(BaseModel):
     name = fields.StringField(
         max_length=5,
         choices=state_choices.keys(),
-        unique=True,
     )
     country = fields.ReferenceField(Country)
 
@@ -76,7 +73,6 @@ class City(BaseModel):
         max_length=7,
         null=True,
         blank=True,
-        unique=True,
     )
     state = fields.ReferenceField(State)
 

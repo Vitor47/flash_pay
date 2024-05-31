@@ -166,6 +166,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
         "apps.core.permission.IsTokenValid",
+        "apps.core.permission.IsActivePermission",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "authentication.jwt_authentication.JWTAuthentication",

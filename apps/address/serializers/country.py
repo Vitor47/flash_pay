@@ -5,9 +5,9 @@ from rest_framework_mongoengine.serializers import DocumentSerializer
 from apps.address.models import Country
 
 
-class UniversitySerializer(DocumentSerializer):
+class CountrySerializer(DocumentSerializer):
     class Meta:
-        ref_name = "University"
+        ref_name = "Country"
         model = Country
         fields = ["id", "name"]
 
@@ -27,7 +27,6 @@ class UniversitySerializer(DocumentSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-
         name = attrs.get("name", None)
         exists_name = False
         if self.instance:
@@ -41,3 +40,9 @@ class UniversitySerializer(DocumentSerializer):
             raise ValidationError({"error": "Este nome já esta em uso!"})
 
         return attrs
+
+    def to_representation(self, instance):
+        instance = super().to_representation(instance)
+
+        instance["name"] = Country.country_choices[instance["name"]]
+        return instance
