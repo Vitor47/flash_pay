@@ -30,10 +30,6 @@ class CustomUserPermission(permissions.BasePermission):
 
 class IsTokenValid(BasePermission):
     def has_permission(self, request, view):
-        # Se a requisição é do Swagger, permita
-        if request.META.get("HTTP_REFERER", "").startswith("/api-swagger/"):
-            return True
-
         user_id = request.user.id
         access_token = request.auth  # Token de acesso
 
