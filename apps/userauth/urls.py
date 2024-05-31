@@ -5,19 +5,16 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.userauth.viewsets.user_login import CustomAuthTokenView, LogoutView
 
-from .views import login_user, logout_user
 from .viewsets.user import UserViewset
 
 app_name = "userauth"
 
 router = DefaultRouter()
-router.register("api/user", UserViewset, basename="user")
+router.register("user", UserViewset, basename="user")
 
 urlpatterns = [
-    path("api/login/", CustomAuthTokenView.as_view(), name="login"),
-    path("api/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/logout/", LogoutView.as_view(), name="token_blacklist"),
-    path("login/", login_user, name="login"),
-    path("logout/", logout_user, name="logout"),
+    path("login/", CustomAuthTokenView.as_view(), name="login"),
+    path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("logout/", LogoutView.as_view(), name="token_blacklist"),
 ]
 urlpatterns += router.urls

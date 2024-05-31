@@ -22,7 +22,7 @@ router = DefaultRouter()
 urlpatterns = [
     path("api/", include(router.urls)),
     path("api-auth/", include("rest_framework.urls")),
-    path("", include("apps.userauth.urls")),
+    path("api/", include("apps.userauth.urls")),
     path("api/core/", include("apps.core.urls")),
     path("api/address/", include("apps.address.urls")),
     # Login backend in redocs or swagger
