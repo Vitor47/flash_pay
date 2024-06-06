@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "widget_tweaks",
     "drf_yasg",
+    "corsheaders",
     # My apps
     "apps.userauth",
     "apps.log",
@@ -162,6 +163,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+# CORS settings
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+
+# Optional settings
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = ["content-type", "authorization"]
+
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
