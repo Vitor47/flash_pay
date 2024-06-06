@@ -86,14 +86,15 @@ WSGI_APPLICATION = "setup.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+ 
+NAME_DB = os.getenv("NAME_DB")
 USERNAME_DB = os.getenv("USERNAME_DB")
 PASSWORD_DB = os.getenv("PASSWORD_DB")
 HOST_DB = os.getenv("HOST_DB")
 
 
 mongoengine.connect(
-    db="cluster0",
+    db=NAME_DB,
     host=f"mongodb+srv://{HOST_DB}/",
     username=USERNAME_DB,
     password=PASSWORD_DB,
