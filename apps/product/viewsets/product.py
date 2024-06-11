@@ -7,32 +7,32 @@ from rest_framework.response import Response
 from rest_framework_mongoengine.viewsets import ModelViewSet
 
 from apps.core.pagination import PageLimitPagination
-from apps.core.permission import ShoppePermission
+from apps.core.permission import ProductPermission
 
-from ..models import Shoppe
-from ..serializers.shoppe import ShoppeSerializer
+from ..models import Product
+from ..serializers.product import ProductRetrieveSerializer, ProductSerializer
 
 
-class ShoppeViewset(ModelViewSet):
+class ProductViewset(ModelViewSet):
 
     """
     A viewset that provides the standard actions
     """
 
-    permission_classes = (ShoppePermission,)
+    permission_classes = (ProductPermission,)
 
     descriptor = {
         "POST": "Adicionou uma barraca.",
         "PUT": "Editou uma barraca.",
         "DELETE": "Removeu uma barraca.",
     }
-    default_serializer_class = ShoppeSerializer
+    default_serializer_class = ProductSerializer
     pagination_class = PageLimitPagination
     serializer_classes = {
-        "create": ShoppeSerializer,
-        "update": ShoppeSerializer,
-        "retrieve": ShoppeSerializer,
-        "list": ShoppeSerializer,
+        "create": ProductSerializer,
+        "update": ProductSerializer,
+        "retrieve": ProductRetrieveSerializer,
+        "list": ProductRetrieveSerializer,
     }
 
     def get_serializer_class(self):
@@ -41,13 +41,13 @@ class ShoppeViewset(ModelViewSet):
         )
 
     def get_queryset(self):
-        return Shoppe.objects.all().order_by("-id")
+        return Product.objects.all().order_by("-id")
 
     def get_object(self):
         obj = super().get_object()
 
         if obj.registered_by != self.request.user:
-            raise NotFound({"detail: Barraca / Café não encontrado"}, code=404)
+            raise NotFound({"detail: Produto não encontrado"}, code=404)
 
         return obj
 
@@ -66,7 +66,7 @@ class ShoppeViewset(ModelViewSet):
 
         return Response(
             {
-                "detail": "Barraca / Café editado com sucesso!",
+                "detail": "Produto editado com sucesso!",
                 "university": self.get_serializer(instance).data,
             },
             status=status.HTTP_200_OK,
@@ -78,6 +78,6 @@ class ShoppeViewset(ModelViewSet):
         self.perform_destroy(instance)
 
         return Response(
-            data={"detail": "Barraca / Café deletado com sucesso!"},
+            data={"detail": "Produto deletado com sucesso!"},
             status=status.HTTP_200_OK,
         )

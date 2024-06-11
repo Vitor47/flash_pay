@@ -25,6 +25,7 @@ urlpatterns = [
     path("api/", include("apps.userauth.urls")),
     path("api/core/", include("apps.core.urls")),
     path("api/address/", include("apps.address.urls")),
+    path("api/product/", include("apps.product.urls")),
     # Login backend in redocs or swagger
     path(
         "api-swagger/",
