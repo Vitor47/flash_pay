@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "apps.log",
     "apps.core",
     "apps.address",
+    "apps.product",
 ]
 
 MIDDLEWARE = [
