@@ -47,7 +47,7 @@ class ShoppeViewset(ModelViewSet):
         obj = super().get_object()
 
         if obj.registered_by != self.request.user:
-            raise NotFound({"detail: Barraca / Café não encontradp"}, code=404)
+            raise NotFound({"detail: Barraca / Café não encontrado"}, code=404)
 
         return obj
 
