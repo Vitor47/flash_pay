@@ -10,7 +10,7 @@ from apps.core.pagination import PageLimitPagination
 from apps.core.permission import ShoppePermission
 
 from ..models import Shoppe
-from ..serializers.shoppe import ShoppeSerializer
+from ..serializers.shoppe import ShoppeRetrieveSerializer, ShoppeSerializer
 
 
 class ShoppeViewset(ModelViewSet):
@@ -31,8 +31,8 @@ class ShoppeViewset(ModelViewSet):
     serializer_classes = {
         "create": ShoppeSerializer,
         "update": ShoppeSerializer,
-        "retrieve": ShoppeSerializer,
-        "list": ShoppeSerializer,
+        "retrieve": ShoppeRetrieveSerializer,
+        "list": ShoppeRetrieveSerializer,
     }
 
     def get_serializer_class(self):

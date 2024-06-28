@@ -154,6 +154,7 @@ class Shoppe(BaseModel):
     )
     description = fields.StringField()
     image = fields.ImageField()
+    university = fields.ReferenceField(University, required=True)
 
     meta = {"allow_inheritance": True}
 

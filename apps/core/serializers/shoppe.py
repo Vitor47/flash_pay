@@ -3,6 +3,7 @@ from base64 import b64encode
 from rest_framework.serializers import ValidationError
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
+from apps.core.serializers.university import UniversitySerializer
 from apps.core.utils import format_cpf_cnpj, is_cnpj_valid, only_numbers
 
 from ..models import Shoppe
@@ -18,6 +19,7 @@ class ShoppeSerializer(DocumentSerializer):
             "cnpj",
             "image",
             "description",
+            "university",
         ]
 
     def create(self, validated_data):
@@ -60,6 +62,39 @@ class ShoppeSerializer(DocumentSerializer):
             attrs["cnpj"] = cnpj
 
         return attrs
+
+    def to_representation(self, instance):
+        instance = super().to_representation(instance)
+        instance["cnpj"] = format_cpf_cnpj(instance["cnpj"])
+
+        image_id = instance["image"]
+        if not image_id:
+            return instance
+
+        try:
+            shoppe_db = Shoppe.objects.get(id=instance["id"])
+            image_data = shoppe_db.image.read()
+            instance["image"] = b64encode(image_data).decode("utf-8")
+        except:
+            pass
+
+        return instance
+
+
+class ShoppeRetrieveSerializer(DocumentSerializer):
+    university = UniversitySerializer(many=False)
+
+    class Meta:
+        ref_name = "Shoppe"
+        model = Shoppe
+        fields = [
+            "id",
+            "name",
+            "cnpj",
+            "image",
+            "description",
+            "university",
+        ]
 
     def to_representation(self, instance):
         instance = super().to_representation(instance)
