@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -41,7 +42,11 @@ class CategoryViewset(ModelViewSet):
         )
 
     def get_queryset(self):
-        return Category.objects.all().order_by("-id")
+        filter_query = Q()
+        if self.request.user.type_user != "administrador":
+            filter_query = Q(registered_by=self.request.user)
+
+        return Category.objects.filter(filter_query).order_by("-id")
 
     def get_object(self):
         obj = super().get_object()

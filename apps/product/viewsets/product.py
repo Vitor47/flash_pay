@@ -41,7 +41,9 @@ class ProductViewset(ModelViewSet):
         )
 
     def get_queryset(self):
-        return Product.objects.all().order_by("-id")
+        return Product.objects.filter(
+            registered_by=self.request.user
+        ).order_by("-id")
 
     def get_object(self):
         obj = super().get_object()
