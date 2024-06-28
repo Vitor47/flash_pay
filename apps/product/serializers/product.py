@@ -3,6 +3,7 @@ from base64 import b64encode
 from rest_framework.serializers import ValidationError
 from rest_framework_mongoengine.serializers import DocumentSerializer
 
+from apps.core.serializers.shoppe import ShoppeSerializer
 from apps.core.serializers.university import UniversitySerializer
 
 from ..models import Product
@@ -20,6 +21,7 @@ class ProductSerializer(DocumentSerializer):
             "description",
             "price",
             "category",
+            "shoppe",
             "university",
             "quantity",
         ]
@@ -58,6 +60,7 @@ class ProductSerializer(DocumentSerializer):
 class ProductRetrieveSerializer(DocumentSerializer):
     category = CategorySerializer(many=False)
     university = UniversitySerializer(many=False)
+    shoppe = ShoppeSerializer(many=False)
 
     class Meta:
         ref_name = "Product"
@@ -69,6 +72,7 @@ class ProductRetrieveSerializer(DocumentSerializer):
             "description",
             "price",
             "category",
+            "shoppe",
             "university",
             "quantity",
         ]
@@ -80,7 +84,11 @@ class ProductRetrieveSerializer(DocumentSerializer):
         if not image_id:
             return instance
 
-        image_data = self.instance.image.read()
-        instance["image"] = b64encode(image_data).decode("utf-8")
+        try:
+            product_db = Product.objects.get(id=instance["id"])
+            image_data = product_db.image.read()
+            instance["image"] = b64encode(image_data).decode("utf-8")
+        except:
+            pass
 
         return instance

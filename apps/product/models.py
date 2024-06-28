@@ -1,6 +1,6 @@
 from mongoengine import CASCADE, fields
 
-from apps.core.models import University
+from apps.core.models import Shoppe, University
 from apps.log.models import BaseModel
 
 
@@ -19,6 +19,9 @@ class Product(BaseModel):
     image = fields.ImageField(required=True)
     category = fields.ReferenceField(
         Category, reverse_delete_rule=CASCADE, required=True
+    )
+    shoppe = fields.ReferenceField(
+        Shoppe, reverse_delete_rule=CASCADE, required=True
     )
     university = fields.ReferenceField(
         University, reverse_delete_rule=CASCADE, required=True
