@@ -27,7 +27,7 @@ class CityViewSet(ModelViewSet):
 
     def get_queryset(self):
         return City.objects.all().order_by("-id")
-    
+
     @method_decorator(cache_page(2400 * 60))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)

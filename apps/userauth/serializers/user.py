@@ -56,17 +56,39 @@ class UserSerializer(DocumentSerializer):
         ]
 
     def create(self, validated_data):
-        if validated_data.get("address"):
-            address = validated_data.pop("address")
-            validated_data["address"] = Address.objects.create(**address).id
-        return super().create(validated_data)
+        address_data = validated_data.pop("address", None)
+        if address_data:
+            address = Address(**address_data)
+            address.save()
+            validated_data["address"] = address
+
+        validated_data["password"] = make_password(validated_data["password"])
+        user = User(**validated_data)
+        user.save()
+        return user
 
     def update(self, instance, validated_data):
-        if validated_data.get("address"):
-            addres = validated_data.pop("addres")
-            if addres:
-                Address.objects.filter(id=instance.id).update(**addres)
-        return super().update(instance, validated_data)
+        address_data = validated_data.pop("address", None)
+        if address_data:
+            if instance.address:
+                Address.objects.filter(id=instance.address.id).update(
+                    **address_data
+                )
+            else:
+                address = Address(**address_data)
+                address.save()
+                instance.address = address
+
+        if "password" in validated_data:
+            validated_data["password"] = make_password(
+                validated_data["password"]
+            )
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
