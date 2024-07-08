@@ -68,7 +68,7 @@ class State(BaseModel):
 
 
 class City(BaseModel):
-    name = fields.StringField(max_length=65, unique=True)
+    name = fields.StringField(max_length=65)
     code_ibge = fields.StringField(
         max_length=7,
         null=True,
