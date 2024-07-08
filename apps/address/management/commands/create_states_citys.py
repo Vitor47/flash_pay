@@ -18,6 +18,9 @@ class Command(BaseCommand):
             raise ValueError("Já existe dados de endereço salvos")
 
         pais = Country.objects.filter(name="brasil").first()
+        if not pais:
+            Country.objects.create(name="brasil")
+            pais = Country.objects.filter(name="brasil").first()
         estados_create = []
         for estado in State.state_choices.keys():
             estados_create.append(

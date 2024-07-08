@@ -45,5 +45,6 @@ class StateSerializer(DocumentSerializer):
     def to_representation(self, instance):
         instance = super().to_representation(instance)
 
+        instance["acronym"] = instance["name"]
         instance["name"] = State.state_choices[instance["name"]]
         return instance

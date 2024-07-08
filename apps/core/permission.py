@@ -122,7 +122,7 @@ class CategoryPermission(permissions.BasePermission):
 
 class ProductPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        if view.action == "list":
+        if view.action in ["list", "products_shoppe"]:
             return True
 
         if not request.user.is_authenticated:

@@ -43,7 +43,7 @@ class ShoppeViewset(ModelViewSet):
 
     def get_queryset(self):
         filter_query = Q()
-        if self.request.user.type_user != "administrador":
+        if self.request.user.is_authenticated and self.request.user.type_user != "administrador":
             filter_query = Q(registered_by=self.request.user)
 
         return Shoppe.objects.filter(filter_query).order_by("-id")
@@ -51,7 +51,7 @@ class ShoppeViewset(ModelViewSet):
     def get_object(self):
         obj = super().get_object()
 
-        if obj.registered_by != self.request.user:
+        if self.request.user.is_authenticated and obj.registered_by != self.request.user:
             raise NotFound({"detail: Barraca / Café não encontrado"}, code=404)
 
         return obj

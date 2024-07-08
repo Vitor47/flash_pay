@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -33,6 +34,7 @@ class ProductViewset(ModelViewSet):
         "update": ProductSerializer,
         "retrieve": ProductRetrieveSerializer,
         "list": ProductRetrieveSerializer,
+        "products_shoppe": ProductRetrieveSerializer,
     }
 
     def get_serializer_class(self):
@@ -83,3 +85,16 @@ class ProductViewset(ModelViewSet):
             data={"detail": "Produto deletado com sucesso!"},
             status=status.HTTP_200_OK,
         )
+    
+    @action(detail=False, methods=["GET"], url_path=r'products-shoppe/(?P<shoppe_id>\w+)')
+    def products_shoppe(self, request, shoppe_id=None):
+        products = Product.objects.filter(shoppe=shoppe_id).order_by("-id")
+        page = self.paginate_queryset(products)
+        
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
+
